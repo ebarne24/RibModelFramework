@@ -175,16 +175,19 @@ parameter <- initializeParameterObject(genome = genome, sphi = 1, num.mixtures =
     codon.table <- do.call(rbind, codon.table)
   }
 
-
 if(what[1] == "Mutation")
 {
   plotCodonSpecificParameters(x, mixture, "Mutation", main="Mutation Parameter Traces", aa.names = aa.names)
 }
+
+for(aa in names.aa)
+{
+  aa.by.table <- codon.table$aa
+  endingCT <- aa.by.table[which(codon.table$ct_ending=="TRUE")]
+  endingAG <- aa.by.table[which(codon.table$ct_ending=="FALSE")]
   
-##Code from Dr. Gilchrist
-aa.names <- aminoAcids()
-codon.table <- (lapply(names.aa, function(x) {codons = AAToCodon(x);n_syn = length(codons);  ct_ending = grepl("[CT]$", codons); return(data.frame(aa = x, n_syn, codons, ct_ending))}))
-codon.table <- do.call(rbind, codon.table)
+  codons <- AAToCodon(endingCT, with.ref.codon)
+}
   
   ### End changes made by Elizabeth Barnes 2022/10/02
   
