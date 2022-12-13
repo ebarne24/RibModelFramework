@@ -32,18 +32,30 @@ plot.Rcpp_ROCParameter <- function(x, what = "Mutation", samples = 100, mixture.
 
 
 ### NOT EXPOSED
-plotParameterObject <- function(x, what = "Mutation", samples = 100, mixture.name = NULL, with.ci = TRUE, aa.names = NULL, ...){
+plotParameterObject <- function(x, what = "Mutation", samples = 100, mixture.name = NULL, with.ci = TRUE, aa.exclude = c("M", "W"), aa.names = NULL, ...){
   numMixtures <- x$numMixtures
   means <- data.frame(matrix(0,ncol=numMixtures,nrow=40))
   sd.values <- data.frame(matrix(0,ncol=numMixtures*2,nrow=40))
-  if(is.na(names.aa)) names.aa <- aminoAcids() 
   
-  if(length(names.aa) == 0) ## error message
-  
+  ## Check to ensure aa.names passed are valid
+  if(is.null(aa.names)) {
+    aa.names <- aminoAcids() }
+  else {
+    if(length(aa.names) == 0) {
+      stop("aa.names not found, length of zero")
+    }
+    
+
   ## remove aa we don't want to or can't plot
-  names.aa <- names.aa[names.aa %in% aa.exclude]
+  aa.names <- aa.names[aa.names %in% aa.exclude]
   paramType <- ifelse(what == "Mutation", 0, 1)
   #cat("ParamType: ", paramType, "\n")
+  
+  #warning message for any values include in aa.exclude
+  if(length(aa.exclude) > 0) {
+    warning("Members of aa.names included in aa.exclude will be excluded.")
+  }
+  
   
   ##NOTE by Elizabeth Barnes 12/8/2022
   ### aa M, W, and X are skipped because n_syn = 1 or 3
@@ -51,7 +63,7 @@ plotParameterObject <- function(x, what = "Mutation", samples = 100, mixture.nam
   for (mixture in 1:numMixtures) {
     # get codon specific parameter
     count <- 1
-    for (aa in names.aa) {
+    for (aa in aa.names) {
       codons <- AAToCodon(aa, T)
       for (i in 1:length(codons))
       {
@@ -65,7 +77,7 @@ plotParameterObject <- function(x, what = "Mutation", samples = 100, mixture.nam
         count <- count + 1
       }
     }
-  }
+  }}
   ## Begin graphing
   mat <- matrix(rep(0,numMixtures*numMixtures),
                 nrow = numMixtures, ncol = numMixtures, byrow = TRUE)
@@ -112,6 +124,12 @@ plotParameterObject <- function(x, what = "Mutation", samples = 100, mixture.nam
 genome <- initializeGenomeObject(file = "orf_coding.fasta")
 
 parameter <- initializeParameterObject(genome = genome, sphi = 1, num.mixtures = 1, gene.assignment = rep(1, length(genome)))
+
+model <- initializeModelObject(parameter = parameter, model = "ROC")
+
+mcmc <- initializeMCMCObject(samples = 500, thinning = 10, adaptive.width = 50)
+
+runMCMC(mcmc = mcmc, genome = genome, model = model)
 
 original_parameter_plot <- plotParameterObject(x = parameter, what = "Mutation", samples = 2000, mixture.name = NULL, with.ci = TRUE)
 
