@@ -7,9 +7,9 @@ convergence.test.Rcpp_Trace <- function(object, samples = 10, frac1 = 0.1,
   current.trace <- 0
   if(what[1] == "Mutation" || what[1] == "Selection")
   {
-    names.aa <- aminoAcids()
+    aa.names <- aminoAcids()
     numCodons <- 0
-    for(aa in names.aa)
+    for(aa in aa.names)
     {
       if (aa == "M" || aa == "W" || aa == "X") next
       codons <- AAToCodon(aa, T)
@@ -17,7 +17,7 @@ convergence.test.Rcpp_Trace <- function(object, samples = 10, frac1 = 0.1,
     }
     index <- 1
     cur.trace <- vector("list", numCodons)
-    for(aa in names.aa)
+    for(aa in aa.names)
     {
       if (aa == "M" || aa == "W" || aa == "X") next
       codons <- AAToCodon(aa, T)
@@ -103,10 +103,10 @@ convergence.test.Rcpp_Trace <- function(object, samples = 10, frac1 = 0.1,
   }
   if(what[1] == "AcceptanceCSP")
   {
-    names.aa <- aminoAcids()
+    aa.names <- aminoAcids()
     index <- 1
-    cur.trace <- vector("list", length(names.aa) - length(c("M","W","X")))
-    for(aa in names.aa)
+    cur.trace <- vector("list", length(aa.names) - length(c("M","W","X")))
+    for(aa in aa.names)
     {
       if (aa == "M" || aa == "W" || aa == "X") next
       cur.trace[[index]] <- object$getCodonSpecificAcceptanceRateTraceForAA(aa)

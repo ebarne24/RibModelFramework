@@ -781,21 +781,21 @@ getCSPEstimates <- function(parameter, filename=NULL, mixture = 1, samples = 10,
 
   model.conditions <- checkModel(parameter)
   model.uses.ref.codon <- model.conditions$model.uses.ref.codon
-  names.aa <- model.conditions$aa
+  aa.names <- model.conditions$aa
   codons <- model.conditions$codons
   parameter.names <- model.conditions$parameter.names
   
   ## Creates empty vector of 0 for initial dataframes
   init <- rep(0.0,length(codons))
   
-  param.1 <- data.frame(Codon=codons,AA=names.aa,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names = codons)
-  param.2 <- data.frame(Codon=codons,AA=names.aa,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
-  param.3 <- data.frame(Codon=codons,AA=names.aa,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
-  param.4 <- data.frame(Codon=codons,AA=names.aa,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
+  param.1 <- data.frame(Codon=codons,AA=aa.names,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names = codons)
+  param.2 <- data.frame(Codon=codons,AA=aa.names,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
+  param.3 <- data.frame(Codon=codons,AA=aa.names,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
+  param.4 <- data.frame(Codon=codons,AA=aa.names,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
   
   if (model.uses.ref.codon)
   {
-    codons <- codons[which(codons %in% unlist(lapply(X = names.aa,FUN = AAToCodon,T)))]
+    codons <- codons[which(codons %in% unlist(lapply(X = aa.names,FUN = AAToCodon,T)))]
   }
   ## Get parameter estimate for each codon
   for (codon in codons)
@@ -925,8 +925,8 @@ checkModel <- function(parameter)
   if(class(parameter)=="Rcpp_ROCParameter" || class(parameter)=="Rcpp_FONSEParameter")
   {
     model.uses.ref.codon <- TRUE
-    names.aa <- parameter$getGroupList()
-    codons <- unlist(lapply(names.aa,AAToCodon))
+    aa.names <- parameter$getGroupList()
+    codons <- unlist(lapply(aa.names,AAToCodon))
     aa <- unlist(lapply(codons,codonToAA))
     parameter.names <- c("Mutation","Selection")
     
@@ -1110,11 +1110,11 @@ initializeCovarianceMatrices <- function(parameter, genome, numMixtures, geneAss
   
   phi <- parameter$getCurrentSynthesisRateForMixture(1) # phi values are all the same initially
   
-  names.aa <- aminoAcids()
+  aa.names <- aminoAcids()
   # ct <- getInstance()
-  #  names.aa <- ct$getGroupList()
+  #  aa.names <- ct$getGroupList()
   
-  for(aa in names.aa)
+  for(aa in aa.names)
   {
     if(aa == "M" || aa == "W" || aa == "X") next
     #should go away when CT is up and running

@@ -159,19 +159,14 @@ plotCodonSpecificParameters <- function(trace, mixture, type="Mutation", main="M
       aa.names <- aa.names[aa.match]
   }
   with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
-<<<<<<< HEAD
+
   
   ###Insert changes made by Elizabeth Barnes 2022/10/02
-library(AnaCoDa)
-fasta.file <- "orf_coding.fasta"
-genome <- initializeGenomeObject(file = fasta.file)
-length(genome)
-parameter <- initializeParameterObject(genome = genome, sphi = 1, num.mixtures = 1, gene.assignment = rep(1,length(genome)))
 
-  for(aa in names.aa)
+  for(aa in aa.names)
   {
     aa.names <- aminoAcids()
-    codon.table <- (lapply(names.aa, function(x) {codons = AAToCodon(x);n_syn = length(codons);  ct_ending = grepl("[CT]$", codons); return(data.frame(aa = x, n_syn, codons, ct_ending))}))
+    codon.table <- (lapply(aa.names, function(x) {codons = AAToCodon(x);n_syn = length(codons);  ct_ending = grepl("[CT]$", codons); return(data.frame(aa = x, n_syn, codons, ct_ending))}))
     codon.table <- do.call(rbind, codon.table)
   }
 
@@ -180,21 +175,21 @@ if(what[1] == "Mutation")
   plotCodonSpecificParameters(x, mixture, "Mutation", main="Mutation Parameter Traces", aa.names = aa.names)
 }
 
-for(aa in names.aa)
+for(aa in aa.names)
 {
   aa.by.table <- codon.table$aa
   endingCT <- aa.by.table[which(codon.table$ct_ending=="TRUE")]
   endingAG <- aa.by.table[which(codon.table$ct_ending=="FALSE")]
   
   codons <- AAToCodon(endingCT, with.ref.codon)
+  length(codons)
+  #length of 1, is this an issue?
 }
   
   ### End changes made by Elizabeth Barnes 2022/10/02
   
-=======
 
->>>>>>> b30d94606988207b0a56e9dacf264d833667005d
-  for(aa in names.aa)
+  for(aa in aa.names)
   { 
     codons <- AAToCodon(aa, with.ref.codon)
     if(length(codons) == 0) next
@@ -367,10 +362,10 @@ plotAcceptanceRatios <- function(trace,main="CSP Acceptance Ratio Traces")
   par(mar = c(5.1, 4.1, 4.1, 2.1))
   
   # TODO change to groupList -> checks for ROC like model is not necessary!
-  names.aa <- aminoAcids()
+  aa.names <- aminoAcids()
   with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
   
-  for(aa in names.aa)
+  for(aa in aa.names)
   { 
     if (!ROC.or.FONSE){
       if(aa == "X") next

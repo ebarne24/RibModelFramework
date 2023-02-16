@@ -57,8 +57,8 @@ plot.Rcpp_ROCModel <- function(x, genome = NULL, samples = 100, mixture = 1,
   expressionValues <- log10(expressionValues)
   genome <- genome$getGenomeForGeneIndices(genes.in.mixture, simulated)
   
-  names.aa <- aminoAcids()
-  for(aa in names.aa)
+  aa.names <- aminoAcids()
+  for(aa in aa.names)
   {
     if(aa == "M" || aa == "W" || aa == "X") next
     codon.probability <- calculateProbabilityVector(parameter,model,expressionValues,mixture,samples,aa,model.type="ROC")
@@ -190,8 +190,8 @@ plot.Rcpp_FONSEModel <- function(x, genome, samples = 100, mixture = 1,
     genes[[i]]$seq <- dna
     genome$addGene(genes[[i]],simulated)
   }
-  names.aa <- aminoAcids()
-  for(aa in names.aa)
+  aa.names <- aminoAcids()
+  for(aa in aa.names)
   {
     if(aa == "M" || aa == "W" || aa == "X") next
     codon.probability <- calculateProbabilityVector(parameter,model,expressionValues,mixture,samples,aa,model.type="FONSE",codon.window = codon.window)
