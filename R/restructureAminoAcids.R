@@ -3,15 +3,89 @@ aminoAcids()
 
 #write new amino acid function to be able to change number of aa included
 
-Std <- c("A", "A","A", "A","C","C", "D", "D", "E", "E", "F", "F", "G", "G", "G", "G", "H", "H", "I", "I", "I", "K", "K", "L", "L", "L", "L", "L", "L", "M", "N", "N", "P", "P", "P", "P", "Q", "Q", "R", "R", "R", "R", "R", "R", "S", "S", "S", "S", "T", "T", "T", "T","W", "V", "V", "V", "V", "Y", "Y")
+Std <- c("A", "A", "C", "D", "E", "F", "G", "G", "H", "I", "I", "K", "L", "L", "M", "N", "P", "P", "Q", "R", "R", "S", "S", "T", "T", "V", "V", "W","X", "Y")
 
-AA <- c("AR", "AR", "AY", "AY", "CY", "CY", "DY", "DY", "ER", "ER", "FY", "FY", "GR", "GR", "GY", "GY", "HY", "HY", "IR", "IY", "IY", "KR", "KR", "LR", "LR", "LR2", "LR2", "LY", "LY", "MR", "NY", "NY", "PR", "PR", "PY", "PY", "QR", "QR", "RR", "RR", "RR2", "RR2", "RY", "RY", "SR", "SR", "SY", "SY", "TR", "TR", "TY", "TY","WR","VR", "VR", "VY", "VY", "YY", "YY")
+AA <- c("AR", "AY", "CY", "DY", "ER", "FY", "GR", "GY", "HY", "IR", "IY", "KR", "LR", "LY", "MR", "NY", "PR", "PY", "QR", "RR", "RY", "SR", "SY", "TR", "TY", "VR", "VY", "WR","XR", "YY")
 
-Codons <- c("GCA", "GCG","GCC", "GCT", "TGC", "TGT", "GAC", "GAT", "GAA", "GAG", "TTC", "TTT", "GGA", "GGG", "GGC", "GGT", "CAC", "CAT", "ATA", "ATC", "ATT", "AAA", "AAG", "TTA", "TTG", "CTA", "CTG", "CTC", "CTT", "ATG", "AAC", "AAT", "CCA", "CCG", "CCC", "CCT", "CAA", "CAG", "CGA", "CGG", "AGA", "AGG", "CGC", "CGT", "TCA", "TCG", "TCC", "TCT", "ACA", "ACG", "ACC", "ACT","TGG","GTA", "GTG", "GTC", "GTT", "TAC", "TAT")
+C1 <- c("GCA", NA, NA, NA, "GAA", NA, "GGA", NA, NA, "ATA", NA, "AAA", "CTA", NA, NA, NA, "CCA", NA, "CAA", "AGA", NA, "TCA", NA, "ACA", NA, "GTA", NA, NA, "TAA", NA)
+
+C2 <- c("GCG", NA, NA, NA, "GAG", NA, "GGG", NA, NA, NA, NA, "AAG", "CTG", NA, "ATG", NA, "CCG", NA, "CAG", "AGG", NA, "TCG", NA, "ACG", NA, "GTG", NA, "TGG", "TAG", NA)
+
+C3 <- c(NA, "GCC", "TGC", "GAC", NA, "TTC", NA, "GGC", "CAC", NA, "ATC", NA, NA, "CTC", NA, "AAC", NA, "CCC", NA, NA, "CGC", NA, "TCC", NA, "ACC", NA, "GTC", NA,  NA, "TAC")
+
+C4 <- c(NA, "GCT", "TGT", "GAT", NA, "TTT", NA, "GGT", "CAT", NA, "ATT", NA, NA, "CTT", NA, "AAT", NA, "CCT", NA, NA, "CGT", NA, "TCT", NA, "ACT", NA, "GTT", NA, NA, "TAT")
+
+C5 <- c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, "TTA", NA, NA, NA, NA, NA, NA, "CGA", NA, NA, NA, NA, NA, NA, NA, NA, "TGA", NA)
+
+C6 <- c(NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, "TTG", NA, NA, NA, NA, NA, NA, "CGG", NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
 
 
-length(Std)
-length(AA)
-length(Codons)
+AATable <- data.frame(Std, AA, C1, C2, C3, C4, C5, C6)
+amino.acids.new <- AATable$AA
 
-AATable <- data.frame(Std, AA, Codons)
+#AATable <- AATable %>% 
+  #mutate_if(is.character, ~replace_na(.,""))
+
+codons <- AATable["AA", c"C1", "C2", "C3", "C4", "C5", "C6"]
+aa.names <- AATable$AA
+rows.two.purines |> AATable[c(1, 5, 7, 12, 17, 19, 22, 24, 26), ]
+
+for(rows.two.purines)
+  AATable[ ,colSums(is.na(AATable))==0]
+
+cols_codon <- AATable[c("C1", "C2", "C3", "C4", "C5", "C6")]
+ for("AA" in AATable)
+   info_aa <- AATable$AA=="AR"
+  codon <- na.omit
+
+
+
+ na.omit(codons)
+  sort(na.omit(codons), decreasing = TRUE)
+  if(!ROC.or.FONSE) codons <- codons[-1]
+  codons <- sort(codons, increasing)
+#cannot get this code to work, should omit NAs, sort codons by decreasing, pull out last alphabetically for reference, then reorder
+  
+#write test case to make sure plotting works for different lists of AAs, 
+  #will be inserted ~line 146 of plotTraceObject code
+  if( is.null(aa.names) ) {
+    aa.names <- aminoAcids()
+  } else
+    aa.match <- (aa.names %in% aminoAcids())
+  ## test to ensure there's no aa being called that don't exist in trace
+  aa.mismatch <- aa.names[!aa.match]
+  if(length(aa.mismatch) > 0){
+    warning("Members ", aa.mismatch, "of aa.names argument absent from trace object and will be excluded.",
+            call. = TRUE, immediate. = FALSE, noBreaks. = FALSE,
+            domain = NULL)
+  }
+  aa.names <- aa.names[aa.match]
+  }
+
+if(aa.names = (amino.acids.new) ) {
+  aa.names <- AATable$AA
+  warning("Alternative amino acid list selected, using amino acids with codons split by ending of purine/pyramidine.")
+} else 
+  aa.names <- aminoAcids()
+    warning("Traditional amino acid list being used.")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
