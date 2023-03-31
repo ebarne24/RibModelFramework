@@ -28,22 +28,33 @@ amino.acids.new <- AATable$AA
 
 codons <- AATable["AA", c"C1", "C2", "C3", "C4", "C5", "C6"]
 aa.names <- AATable$AA
-rows.two.purines |> AATable[c(1, 5, 7, 12, 17, 19, 22, 24, 26), ]
 
+#could try subsetting data by which columns in those rows contain data and then write command to drop the rest
+
+rows.two.purines |> slice(AATable, c(1, 5, 7, 12, 17, 19, 22, 24, 26))
 for(rows.two.purines)
-  AATable[ ,colSums(is.na(AATable))==0]
-
-cols_codon <- AATable[c("C1", "C2", "C3", "C4", "C5", "C6")]
- for("AA" in AATable)
-   info_aa <- AATable$AA=="AR"
-  codon <- na.omit
+  rows.two.purines |> select_if(~ !any(is.na(.)))
 
 
+rows.two.pyrimidines |> slice(AATable, c(2, 3, 4, 6, 8, 9, 11, 14, 16, 18, 21, 23, 25, 27, 30))
+for(rows.two.pyrimidines)
+  rows.two.pyrimidines |> select_if(~ !any(is.na(.)))
 
- na.omit(codons)
-  sort(na.omit(codons), decreasing = TRUE)
-  if(!ROC.or.FONSE) codons <- codons[-1]
-  codons <- sort(codons, increasing)
+rows.four.purines |> slice(AATable, c(13, 20))
+for(rows.four.purines)
+  rows.four.purines |> select_if(~ !any(is.na(.)))
+
+
+#cols_codon <- AATable[c("C1", "C2", "C3", "C4", "C5", "C6")]
+ #for("AA" in AATable)
+   #info_aa <- AATable$AA=="AR"
+ # codon <- na.omit
+
+
+# na.omit(codons)
+ # sort(na.omit(codons), decreasing = TRUE)
+ # if(!ROC.or.FONSE) codons <- codons[-1]
+ # codons <- sort(codons, increasing)
 #cannot get this code to work, should omit NAs, sort codons by decreasing, pull out last alphabetically for reference, then reorder
   
 #write test case to make sure plotting works for different lists of AAs, 
