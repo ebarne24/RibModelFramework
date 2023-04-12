@@ -13,8 +13,31 @@ aa <- c("KR", "NY", "KR", "NY", "TR", "TY", "TR", "TY", "RR", "RR", "IR", "IY",
         "GY", "GR", "GY", "VR", "VY", "VR", "VY", "YY", "YY", "SR", "SY", "SR", "SY",
         "CY", "WR", "CY", "LR", "FY", "LR", "FY")
 
-AATablealt <- data.frame(codons, Std, aa)
+AATablealt <- data.frame(Std, aa, codons)
 aminoAcidsNew <- AATablealt$aa #the purine/pyrimidine portions of amino acids
+
+codons <- select(AATablealt, aa, codons)
+
+## Check to ensure aa.names passed are valid
+###
+  if(is.null(aa.names)) {
+    aa.names <- aminoAcids()
+  } else {
+    aa.match <- aa.names %in% aminoAcids())
+    aa.new.match <- aa.names %in% aminoAcidsNew
+#test to ensure there's no aa being called that don't exist in trace
+aa.mismatch <- aa.names[!aa.match]
+aa.new.mismatch <- aa.names[!aa.new.match]
+if(length(aa.mismatch) > length(aa.new.mismatch)) {
+  warning("Members ", aa.mismatch, "of aa.names argument absent from trace object and will be excluded.",
+          call. = TRUE, immediate. = FALSE, noBreaks. = FALSE,
+          domain = NULL)
+} if(length(aa.new.mismatch) > length(aa.mismatch)) {
+  warning("Proceeding with plotting split amino acids.",
+          call. = TRUE, immediate. = FALSE, noBreaks. = FALSE,
+          domain = NULL)
+}
+  }
 
 for(aa in AATablealt) #starting at line 364 in plotTraceObject code
 {if (!ROC.or.FONSE)}
