@@ -796,18 +796,11 @@ getCSPEstimates <- function(parameter, filename=NULL, mixture = 1, samples = 10,
   ## Creates empty vector of 0 for initial dataframes
   init <- rep(0.0,length(codons))
   
-<<<<<<< HEAD
-  param.1 <- data.frame(Codon=codons,AA=aa.names,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names = codons)
-  param.2 <- data.frame(Codon=codons,AA=aa.names,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
-  param.3 <- data.frame(Codon=codons,AA=aa.names,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
-  param.4 <- data.frame(Codon=codons,AA=aa.names,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
-=======
   param.1 <- data.frame(Codon=codons,AA=names.aa,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names = codons)
   param.2 <- data.frame(Codon=codons,AA=names.aa,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
   param.3 <- data.frame(Codon=codons,AA=names.aa,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
   param.4 <- data.frame(Codon=codons,AA=names.aa,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
   param.5 <- data.frame(Codon=codons,AA=names.aa,Mean=init,Std.Dev=init,Lower.quant=init,Upper.quant=init,stringsAsFactors = F,row.names=codons)
->>>>>>> 0766d86ffff484e312ce4da0481c2b963fe8aa0a
   
   if (model.uses.ref.codon)
   {

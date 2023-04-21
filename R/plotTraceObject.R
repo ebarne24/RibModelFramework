@@ -157,45 +157,11 @@ plotCodonSpecificParameters <- function(trace, mixture, type="Mutation", main="M
             call. = TRUE, immediate. = FALSE, noBreaks. = FALSE,
             domain = NULL)
   }
-<<<<<<< HEAD
+aa.names <- aa.names[aa.match]
+
   with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
 
-  
-  ###Insert changes made by Elizabeth Barnes 2022/10/02
-
-  for(aa in aa.names)
-  {
-    aa.names <- aminoAcids()
-    codon.table <- (lapply(aa.names, function(x) {codons = AAToCodon(x);n_syn = length(codons);  ct_ending = grepl("[CT]$", codons); return(data.frame(aa = x, n_syn, codons, ct_ending))}))
-    codon.table <- do.call(rbind, codon.table)
-  }
-
-if(what[1] == "Mutation")
-{
-  plotCodonSpecificParameters(x, mixture, "Mutation", main="Mutation Parameter Traces", aa.names = aa.names)
-}
-
-for(aa in aa.names)
-{
-  aa.by.table <- codon.table$aa
-  endingCT <- aa.by.table[which(codon.table$ct_ending=="TRUE")]
-  endingAG <- aa.by.table[which(codon.table$ct_ending=="FALSE")]
-  
-  codons <- AAToCodon(endingCT, with.ref.codon)
-  length(codons)
-  #length of 1, is this an issue?
-}
-  
-  ### End changes made by Elizabeth Barnes 2022/10/02
-  
-
-  for(aa in aa.names)
-=======
-  aa.names <- aa.names[aa.match]
-  
-  with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
   for(aa in names.aa)
->>>>>>> 0766d86ffff484e312ce4da0481c2b963fe8aa0a
   { 
     codons <- AAToCodon(aa, with.ref.codon)
     if(length(codons) == 0) next
