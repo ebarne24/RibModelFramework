@@ -161,7 +161,6 @@ void ROCModel::calculateLogLikelihoodRatioPerGroupingPerCategory(std::string gro
 	double selection[5];
 	double mutation_proposed[5];
 	double selection_proposed[5];
-
 	int codonCount[6];
 	Gene *gene;
 	SequenceSummary *sequenceSummary;
@@ -448,7 +447,7 @@ bool ROCModel::getParameterTypeFixed(std::string csp_parameter)
 	{
 		bool dm_fixed = parameter -> isDMFixed();
 		bool deta_fixed = parameter -> isDEtaFixed();
-		fixed == dm_fixed && deta_fixed;
+		fixed = (dm_fixed && deta_fixed);
 	}
 	return(fixed);
 }
@@ -766,8 +765,18 @@ void ROCModel::simulateGenome(Genome &genome)
 			std::string codon = geneSeq.substr((position * 3), 3);
 			std::string aa = SequenceSummary::codonToAA(codon);
 
-			if (aa == "X") {
-				if (position < (geneSeq.size() / 3) - 1) my_print("Warning: Internal stop codon found in gene % at position %. Ignoring and moving on.\n", gene.getId(), position);
+			if (aa == "X") 
+			{
+				if (position < (geneSeq.size() / 3) - 1) 
+				{
+					my_print("Warning: Internal stop codon found in gene % at position %. Including internal stop codon.\n", gene.getId(), position);
+					tmpSeq += codon;
+				}
+				continue;
+			} else if (aa == "#") 
+			{
+				my_print("Warning: Invalid codon found in gene % at position %. Including invalid codon in current position, but will be ignored by AnaCoDa in analysis.\n", gene.getId(), position);
+				tmpSeq += codon;
 				continue;
 			}
 
@@ -790,6 +799,8 @@ void ROCModel::simulateGenome(Genome &genome)
 			SequenceSummary::AAToCodonRange(aa, aaStart, aaEnd, false); //need the first spot in the array where the codons for curAA are
 			codon = sequenceSummary.indexToCodon(aaStart + codonIndex);//get the correct codon based off codonIndex
 			tmpSeq += codon;
+			
+			
 		}
 		std::string codon =	sequenceSummary.indexToCodon((unsigned)Parameter::randUnif(61.0, 64.0)); //randomly choose a stop codon, from range 61-63
 		tmpSeq += codon;

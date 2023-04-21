@@ -11,7 +11,7 @@
 #' @param geneIndex When plotting expression, the index of the gene to be plotted.
 #' @param mixture The mixture for which to plot values.
 #' @param log.10.scale A logical value determining if figures should be plotted on the log.10.scale (default=F). Should not be applied to mutation and selection parameters estimated by ROC/FONSE.
-#' @param aa.names A vector of single letter amino acid names used to set order of plotting
+#' @param aa.names A vector of single letter amino acid names used to set order and which amino acids to plot. Default value is amino.acids() and values must occur in aminoAcids(). Future code will allow non-standard groupings via future genetic.code argument.
 #'
 #' @param ... Optional, additional arguments.
 #' For this function, may be a logical value determining if the trace is ROC-based or not.
@@ -21,7 +21,7 @@
 #' @description Plots different traces, specified with the \code{what} parameter.
 #'
 plot.Rcpp_Trace <- function(x, what=c("Mutation", "Selection", "MixtureProbability" ,"Sphi", "Mphi", "Aphi", "Sepsilon", "ExpectedPhi", "Expression","NSEProb","NSERate","InitiationCost","PartitionFunction"), 
-                                   geneIndex=1, mixture = 1, log.10.scale=F, aa.names = NULL)
+                                   geneIndex=1, mixture = 1, log.10.scale=F, aa.names = aminoAcids())
 {
   if(what[1] == "Mutation")
   {
@@ -113,14 +113,16 @@ plot.Rcpp_Trace <- function(x, what=c("Mutation", "Selection", "MixtureProbabili
 #' @param ROC.or.FONSE A logical value determining if the Parameter was ROC/FONSE or not.
 #'
 #' @param log.10.scale A logical value determining if figures should be plotted on the log.10.scale (default=F). Should not be applied to mutation and selection parameters estimated by ROC/FONSE.
+#' 
+#' @param aa.names A vector of single letter amino acid names used to set order and subset of amino acids to plot. Default value is aminoAcids().
 #'
 #' @return This function has no return value.
 #' 
 #' @description Plots a codon-specific set of traces, specified with the \code{type} parameter.
 #'
-plotCodonSpecificParameters <- function(trace, mixture, type="Mutation", main="Mutation Parameter Traces", ROC.or.FONSE=TRUE, log.10.scale=F, aa,vec = NULL)
+plotCodonSpecificParameters <- function(trace, mixture, type="Mutation", main="Mutation Parameter Traces", ROC.or.FONSE=TRUE, log.10.scale=FALSE, aa.names = aminoAcids())
 {
-  opar <- par(no.readonly = T) 
+  opar <- par(no.readonly = TRUE)
   ### Trace plot.
   if (ROC.or.FONSE)
   {
@@ -145,19 +147,17 @@ plotCodonSpecificParameters <- function(trace, mixture, type="Mutation", main="M
   ### TODO change to groupList -> checks for ROC like model is not necessary!
 
   ## Check to ensure aa.names passed are valid
-  if( is.null(aa.names) ) {
-      aa.names <- aminoAcids()
-  } else {
-      aa.match <- (aa.names %in% aminoAcids())
-      ## test to ensure there's no aa being called that don't exist in trace
-      aa.mismatch <- aa.names[!aa.match]
-      if(length(aa.mismatch) > 0){
-          warning("Members ", aa.mismatch, "of aa.names argument absent from trace object and will be excluded.",
-                  call. = TRUE, immediate. = FALSE, noBreaks. = FALSE,
-                  domain = NULL)
-          }
-      aa.names <- aa.names[aa.match]
+  ## To have this work with non-standard AA codes, we need to add a genetic.code
+  ## argument when calling the function.
+  aa.match <- (aa.names %in% aminoAcids())
+  ## test to ensure there's no aa being called that don't exist in trace
+  aa.mismatch <- aa.names[!aa.match]
+  if(length(aa.mismatch) > 0){
+    warning("Members ", aa.mismatch, "of aa.names not found in aminoAcids() object and will be excluded.",
+            call. = TRUE, immediate. = FALSE, noBreaks. = FALSE,
+            domain = NULL)
   }
+<<<<<<< HEAD
   with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
 
   
@@ -190,6 +190,12 @@ for(aa in aa.names)
   
 
   for(aa in aa.names)
+=======
+  aa.names <- aa.names[aa.match]
+  
+  with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
+  for(aa in names.aa)
+>>>>>>> 0766d86ffff484e312ce4da0481c2b963fe8aa0a
   { 
     codons <- AAToCodon(aa, with.ref.codon)
     if(length(codons) == 0) next
