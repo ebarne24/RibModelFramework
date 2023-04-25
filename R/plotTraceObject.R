@@ -160,7 +160,7 @@ plotCodonSpecificParameters <- function(trace, mixture, type="Mutation", main="M
 aa.names <- aa.names[aa.match]
 
   with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
-  for(aa in names.aa)
+  for(aa in aa.names)
   { 
     codons <- AAToCodon(aa, with.ref.codon)
     if(length(codons) == 0) next

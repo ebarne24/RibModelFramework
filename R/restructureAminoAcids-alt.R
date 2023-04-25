@@ -68,9 +68,9 @@ dev.off()
 #' 
 #' @description Plots a codon-specific set of traces, specified with the \code{type} parameter.
 #'
-plotCodonSpecificParameters.backup <- function(trace, mixture, type="Mutation", main="Mutation Parameter Traces", ROC.or.FONSE=TRUE, log.10.scale=F, aa,vec = NULL)
+plotCodonSpecificParameters.backup <- plotCodonSpecificParameters <- function(trace, mixture, type="Mutation", main="Mutation Parameter Traces", ROC.or.FONSE=TRUE, log.10.scale=FALSE, aa.names = aminoAcids())
 {
-  opar <- par(no.readonly = T) 
+  opar <- par(no.readonly = TRUE)
   ### Trace plot.
   if (ROC.or.FONSE)
   {
@@ -95,22 +95,19 @@ plotCodonSpecificParameters.backup <- function(trace, mixture, type="Mutation", 
   ### TODO change to groupList -> checks for ROC like model is not necessary!
   
   ## Check to ensure aa.names passed are valid
-  if( is.null(aa.names) ) {
-    aa.names <- aminoAcids()
-  } else {
-    aa.match <- (aa.names %in% aminoAcids())
-    ## test to ensure there's no aa being called that don't exist in trace
-    aa.mismatch <- aa.names[!aa.match]
-    if(length(aa.mismatch) > 0){
-      warning("Members ", aa.mismatch, "of aa.names argument absent from trace object and will be excluded.",
-              call. = TRUE, immediate. = FALSE, noBreaks. = FALSE,
-              domain = NULL)
-    }
-    aa.names <- aa.names[aa.match]
+  ## To have this work with non-standard AA codes, we need to add a genetic.code
+  ## argument when calling the function.
+  aa.match <- (aa.names %in% aminoAcids())
+  ## test to ensure there's no aa being called that don't exist in trace
+  aa.mismatch <- aa.names[!aa.match]
+  if(length(aa.mismatch) > 0){
+    warning("Members ", aa.mismatch, "of aa.names not found in aminoAcids() object and will be excluded.",
+            call. = TRUE, immediate. = FALSE, noBreaks. = FALSE,
+            domain = NULL)
   }
+  aa.names <- aa.names[aa.match]
+  
   with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
-  
-  
   for(aa in aa.names)
   { 
     codons <- AAToCodon(aa, with.ref.codon)
@@ -206,7 +203,7 @@ plotCodonSpecificParameters.backup <- function(trace, mixture, type="Mutation", 
         {
           cur.trace[[i]] <- log10(cur.trace[[i]])
         }
-      } # end if(special)
+      }
       else{
         cur.trace[[i]] <- trace$getCodonSpecificParameterTraceByMixtureElementForCodon(mixture, codons[i], paramType, with.ref.codon)
         if (log.10.scale)
