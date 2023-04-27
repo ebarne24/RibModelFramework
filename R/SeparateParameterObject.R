@@ -121,15 +121,15 @@ plotParameterObject <- function(x, what = "Mutation", samples = 100, mixture.nam
 
 ##Test plots made after modifying code
 
-genome <- initializeGenomeObject(file = "orf_coding.fasta")
+#genome <- initializeGenomeObject(file = "orf_coding.fasta")
 
-parameter <- initializeParameterObject(genome = genome, sphi = 1, num.mixtures = 1, gene.assignment = rep(1, length(genome)))
+#parameter <- initializeParameterObject(genome = genome, sphi = 1, num.mixtures = 1, gene.assignment = rep(1, length(genome)))
 
-model <- initializeModelObject(parameter = parameter, model = "ROC")
+#model <- initializeModelObject(parameter = parameter, model = "ROC")
 
-mcmc <- initializeMCMCObject(samples = 500, thinning = 10, adaptive.width = 50)
+#mcmc <- initializeMCMCObject(samples = 500, thinning = 10, adaptive.width = 50)
 
-runMCMC(mcmc = mcmc, genome = genome, model = model)
+#runMCMC(mcmc = mcmc, genome = genome, model = model)
 
 original_parameter_plot <- plotParameterObject(x = parameter, what = "Mutation", samples = 2000, mixture.name = NULL, with.ci = TRUE)
 
