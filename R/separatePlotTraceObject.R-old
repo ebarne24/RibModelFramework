@@ -103,15 +103,15 @@ with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
 
 
 #codon table to make sorting easier
-for(aa in aa.names)
+for(aa in names.aa)
 {
   aa.names <- aminoAcids()
-  codon.table <- (lapply(aa.names, function(x) {codons = AAToCodon(x);n_syn = length(codons);  ct_ending = grepl("[CT]$", codons); return(data.frame(aa = x, n_syn, codons, ct_ending))}))
+  codon.table <- (lapply(names.aa, function(x) {codons = AAToCodon(x);n_syn = length(codons);  ct_ending = grepl("[CT]$", codons); return(data.frame(aa = x, n_syn, codons, ct_ending))}))
   codon.table <- do.call(rbind, codon.table)
 }
 
 ##filtering codon table by either AG or CT ending
-for(aa in aa.names)
+for(aa in names.aa)
 {
   aa.by.table <- codon.table$aa
   aaEndingCT <- aa.by.table[which(codon.table$ct_ending=="TRUE")]
