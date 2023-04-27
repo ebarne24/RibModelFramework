@@ -32,5 +32,7 @@ myPaths <- c(myPaths[2], myPaths[1])
 .libPaths(myPaths) #add new path
 
 library(devtools)
-Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
 install_github("ebarne24/RibModelFramework", dependencies = TRUE)
+
+usethis::use_build_ignore(c("dev"))
+
