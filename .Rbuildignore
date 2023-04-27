@@ -6,3 +6,5 @@
 ^\.travis\.yml$     # Used for continuous integration testing with travis
 ^.*\.tar\.gz	    # Build package
 ^\.nfs		    # ignore file system leftovers
+^dev/.*
+
