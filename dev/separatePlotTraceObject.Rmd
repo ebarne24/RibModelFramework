@@ -1,0 +1,277 @@
+---
+title: "separatePlotTraceObject"
+author: "Elizabeth Barnes"
+date: "11/28/2022"
+output: html_document
+---
+#Loading in required libraries
+Loading in AnaCoDa
+```{r}
+library(AnaCoDa)
+library(roxygen2)
+??roxygen2
+```
+
+Inserting plot function from "plotTraceObject.R" code. I inserted an additional argument for "codon.table" that by default = NULL. This means, that as long as codon.table = NULL, old code will still run as it has normally. Settings for if "codon.table" has a value will be included further below.
+
+```{r cars}
+#' Plot Trace Object
+#' @param x An Rcpp trace object initialized with \code{initializeTraceObject}.
+#' @param what A string containing one of the following to graph: \code{Mutation, Selection, Alpha, LambdaPrime, MeanWaitingTime, VarWaitingTime
+#' MixtureProbability, Sphi, Mphi, Aphi, Spesilon, ExpectedPhi, Expression}.
+#' @param geneIndex When plotting expression, the index of the gene to be plotted.
+#' @param mixture The mixture for which to plot values.
+#' @param log.10.scale A logical value determining if figures should be plotted on the log.10.scale (default=F). Should not be applied to mutation and selection parameters estimated by ROC/FONSE.
+#' @param aa.names A vector of single letter amino acid names used to set order of plotting
+#'
+#' @param codon.table An argument for using codon table as source for amino acid names instead of default amino acid list
+#' @param ... Optional, additional arguments.
+#' For this function, may be a logical value determining if the trace is ROC-based or not.
+#'
+#' @return This function has no return value.
+#' 
+#' @description Plots different traces, specified with the \code{what} parameter.
+#'
+
+plot.Rcpp_Trace <- function(x, what=c("Mutation", "Selection", "MixtureProbability" ,"Sphi", "Mphi", "Aphi", "Sepsilon", "ExpectedPhi", "Expression","NSEProb","NSERate","InitiationCost","PartitionFunction"), 
+                            geneIndex=1, mixture = 1, log.10.scale=F, aa.names = NULL, codon.table = NULL)
+{
+  if(what[1] == "Mutation")
+  {
+    plotCodonSpecificParameters(x, mixture, "Mutation", main="Mutation Parameter Traces", aa.names = aa.names)
+  }
+  if(what[1] == "Selection")
+  {
+    plotCodonSpecificParameters(x, mixture, "Selection", main="Selection Parameter Traces", aa.names = aa.names)
+  }
+  if(what[1] == "Alpha")
+  {
+    plotCodonSpecificParameters(x, mixture, "Alpha", main="Alpha Parameter Traces", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  }
+  if(what[1] == "Lambda")
+  {
+    plotCodonSpecificParameters(x, mixture, "Lambda", main="Lambda Parameter Traces", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  } 
+  
+  if(what[1] == "MeanWaitingTime")
+  {
+    plotCodonSpecificParameters(x, mixture, "MeanWaitingTime", main="Mean Waiting Time Parameter Traces", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  }  
+  if(what[1] == "VarWaitingTime")
+  {
+    plotCodonSpecificParameters(x, mixture, "VarWaitingTime", main="Variance Waiting Time Parameter Traces", ROC.or.FONSE=FALSE, aa.names = aa.names)
+  }  
+  if(what[1] == "NSEProb")
+  {
+    plotCodonSpecificParameters(x, mixture, "NSEProb", main="Nonsense Error Probability Parameter Traces", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  }  
+  if(what[1] == "MixtureProbability")
+  {
+    plotMixtureProbability(x)
+  }
+  if(what[1] == "Sphi")
+  {
+    plotHyperParameterTrace(x, what = what[1]) 
+  }
+  if(what[1] == "Mphi") 
+  {
+    plotHyperParameterTrace(x, what = what[1])
+  }
+  if(what[1] == "Aphi")
+  {
+    plotHyperParameterTrace(x, what = what[1])
+  }
+  if(what[1] == "InitiationCost")
+  {
+    plotFONSEHyperParameterTrace(x,what=what[1])
+  }
+  if(what[1] == "PartitionFunction")
+  {
+    plotPANSEHyperParameterTrace(x,what=what[1])
+  }
+  if(what[1] == "Sepsilon") 
+  {
+    plotHyperParameterTrace(x, what = what[1])
+  }
+  if(what[1] == "ExpectedPhi")
+  {
+    plotExpectedPhiTrace(x)
+  }
+  if(what[1] == "Expression")
+  {
+    plotExpressionTrace(x, geneIndex)
+  }
+  if(what[1] == "AcceptanceRatio")
+  {
+    plotAcceptanceRatios(x)
+  }
+  if(what[1] == "NSERate")
+  {
+    plotCodonSpecificParameters(x, mixture, "NSERate", main="NSERate", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  }  
+}
+
+#Current code for making sure aa.names passed are valid
+##This is the current set of code from plotTraceObject.R for making sure "aa.names" object is valid. Currently, aa.names = NULL by default, and if aa.names is null, this code sets aa.names = to AminoAcids(). The issue with this is AminoAcids() is globally defined, and we would perhaps like it to be locally defined. This code can be a template for me to map the "codon.table" argument to the create codon table.
+
+ names.aa <- aminoAcids()
+  
+if( is.null(aa.names) ) {
+  aa.names <- aminoAcids()
+} else {
+  aa.match <- (aa.names %in% aminoAcids())
+  ## test to ensure there's no aa being called that don't exist in trace
+  aa.mismatch <- aa.names[!aa.match]
+  if(length(aa.mismatch) > 0){
+    warning("Members ", aa.mismatch, "of aa.names argument absent from trace object and will be excluded.",
+            call. = TRUE, immediate. = FALSE, noBreaks. = FALSE,
+            domain = NULL)
+  }
+  aa.names <- aa.names[aa.match]
+}
+with.ref.codon <- ifelse(ROC.or.FONSE, TRUE, FALSE)
+
+#Creating codon table
+##This is the code for creating a codon table to make sorting by codon endings easier. It includes columns for amino acid, number of synonyms, codons, and ct_ending (true or false).
+for(aa in names.aa)
+{
+  aa.names <- aminoAcids()
+  codon.table <- (lapply(names.aa, function(x) {codons = AAToCodon(x);n_syn = length(codons);  ct_ending = grepl("[CT]$", codons); return(data.frame(aa = x, n_syn, codons, ct_ending))}))
+  codon.table <- do.call(rbind, codon.table)
+}
+
+#Code for filtering codon table table codon ending
+##I then wrote code for filtering codons included in the table that specifically had a "CT" ending or "AG" ending. I also created another object "aa.by.table" which is just a list of amino acids based on the corresponding column in the table. This could be a way to define amino acids locally rather than globally.
+
+for(aa in names.aa)
+{
+  aa.by.table <- codon.table$aa
+  aaEndingCT <- aa.by.table[which(codon.table$ct_ending=="TRUE")]
+  aaEndingAG <- aa.by.table[which(codon.table$ct_ending=="FALSE")]
+}
+
+#Code for defining aa.names by column in table locally
+## This code is based on the above code for making sure aa.names passed are valid. If codon.table is NULL, aa.names will be based on aminoAcids() like before. If codon.table is not null, aa.names will come from the amino acid column from the table. I also inserted a warning message in the case that codon.table is NULL, stating that the default aminoAcids() list will be used. 
+
+#argument for passing to codon list
+##if codon.list = NULL, use aa.names
+if( is.null(codon.table) ) {
+  aa.names <- aminoAcids()
+  warning("codon.table null, using default aminoAcids() list")
+} else { aa.names <- aa.by.table
+}
+
+
+```
+
+
+#Loading in genome, parameter, and trace objects
+I am loading in genome, parameter, and trace objects for the purpose of examining and possibly using methods within them. 
+```{r}
+genome <- initializeGenomeObject(file = "orf_coding.fasta")
+
+parameter <- initializeParameterObject(genome = genome, sphi = 1, num.mixtures = 1, gene.assignment = rep(1, length(genome)))
+
+trace <- parameter$getTraceObject()
+```
+
+#get Codon Counts
+```{r}
+codon_counts <- getCodonCounts(genome)
+```
+#Create new argument for splitting
+Options for plotting differently based on codon ending could be either treating synonymous codons the same as if they were separate amino acids, or just plotting separately. My goal is to create a new argument to split by codon ending, set to NULL by default. Like above with the codon.table argument, this should still allow the old code to run fine.
+
+I will try to include this within the plot.Rcpp_Trace function. I inserted an argument for "ct_ending" defaulted to NULL. This will also be able to be set to TRUE or FALSE.
+```{r}
+plot.Rcpp_Trace <- function(x, what=c("Mutation", "Selection", "MixtureProbability" ,"Sphi", "Mphi", "Aphi", "Sepsilon", "ExpectedPhi", "Expression","NSEProb","NSERate","InitiationCost","PartitionFunction"), 
+                                   geneIndex=1, mixture = 1, log.10.scale=F, aa.names = NULL, codon.table = NULL, plot_by_pairs = NULL)
+{
+  if(what[1] == "Mutation")
+  {
+    plotCodonSpecificParameters(x, mixture, "Mutation", main="Mutation Parameter Traces", aa.names = aa.names)
+  }
+  if(what[1] == "Selection")
+  {
+    plotCodonSpecificParameters(x, mixture, "Selection", main="Selection Parameter Traces", aa.names = aa.names)
+  }
+  if(what[1] == "Alpha")
+  {
+    plotCodonSpecificParameters(x, mixture, "Alpha", main="Alpha Parameter Traces", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  }
+  if(what[1] == "Lambda")
+  {
+    plotCodonSpecificParameters(x, mixture, "Lambda", main="Lambda Parameter Traces", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  } 
+  
+  if(what[1] == "MeanWaitingTime")
+  {
+    plotCodonSpecificParameters(x, mixture, "MeanWaitingTime", main="Mean Waiting Time Parameter Traces", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  }  
+  if(what[1] == "VarWaitingTime")
+  {
+    plotCodonSpecificParameters(x, mixture, "VarWaitingTime", main="Variance Waiting Time Parameter Traces", ROC.or.FONSE=FALSE, aa.names = aa.names)
+  }  
+  if(what[1] == "NSEProb")
+  {
+    plotCodonSpecificParameters(x, mixture, "NSEProb", main="Nonsense Error Probability Parameter Traces", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  }  
+  if(what[1] == "MixtureProbability")
+  {
+    plotMixtureProbability(x)
+  }
+  if(what[1] == "Sphi")
+  {
+    plotHyperParameterTrace(x, what = what[1]) 
+  }
+  if(what[1] == "Mphi") 
+  {
+    plotHyperParameterTrace(x, what = what[1])
+  }
+  if(what[1] == "Aphi")
+  {
+    plotHyperParameterTrace(x, what = what[1])
+  }
+  if(what[1] == "InitiationCost")
+  {
+    plotFONSEHyperParameterTrace(x,what=what[1])
+  }
+  if(what[1] == "PartitionFunction")
+  {
+    plotPANSEHyperParameterTrace(x,what=what[1])
+  }
+  if(what[1] == "Sepsilon") 
+  {
+    plotHyperParameterTrace(x, what = what[1])
+  }
+  if(what[1] == "ExpectedPhi")
+  {
+    plotExpectedPhiTrace(x)
+  }
+  if(what[1] == "Expression")
+  {
+    plotExpressionTrace(x, geneIndex)
+  }
+  if(what[1] == "AcceptanceRatio")
+  {
+    plotAcceptanceRatios(x)
+  }
+  if(what[1] == "NSERate")
+  {
+    plotCodonSpecificParameters(x, mixture, "NSERate", main="NSERate", ROC.or.FONSE=FALSE, log.10.scale=log.10.scale, aa.names = aa.names)
+  }  
+}
+
+if( is.null(plot_by_pairs) ) {
+  aa.names <- aminoAcids()
+  warning("split plotting not desired, using default aminoAcids() list")
+} if (isTRUE(plot_by_pairs) ){
+  aa.names <- aaEndingCT }
+if(isFALSE(plot_by_pairs)) {
+  aa.names <- aaEndingAG
+}
+
+```
+
+
+
